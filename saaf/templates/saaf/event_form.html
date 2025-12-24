@@ -1,0 +1,38 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    New Event
+{% endblock title %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 py-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Event</h2>
+
+  <form method="post" class="bg-white rounded-lg shadow p-6 space-y-4">
+    {% csrf_token %}
+
+    <div>
+      <label for="id_title" class="block text-sm font-medium text-gray-700">Title</label>
+      {{ form.title }}
+    </div>
+
+    <div>
+      <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
+      {{ form.description }}
+    </div>
+
+    <div>
+      <label for="id_date" class="block text-sm font-medium text-gray-700">Date & Time</label>
+      {{ form.date }}
+    </div>
+
+    <div>
+      <label for="id_location_name" class="block text-sm font-medium text-gray-700">Location</label>
+      {{ form.location_name }}
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Save
+    </button>
+  </form>
+</div>
+{% endblock content %}

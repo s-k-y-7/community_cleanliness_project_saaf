@@ -1,0 +1,42 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    Profile
+{% endblock title %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-6">
+  <div class="bg-white rounded-lg shadow px-6 py-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome, {{ user.username }} 👋</h2>
+    <p class="text-gray-600">Here’s a quick look at your activity.</p>
+  </div>
+
+  <div class="mb-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4 px-6">Events You've Joined</h3>
+    {% if joined_events %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for event in joined_events %}
+          <div class="bg-white rounded-lg shadow hover:shadow-md transition px-6 py-4">
+            <h4 class="text-lg font-bold text-blue-600">
+              <a href="{% url 'event-detail' event.pk %}">{{ event.title }}</a>
+            </h4>
+            <p class="text-sm text-gray-500 mt-1">{{ event.location_name }}</p>
+            <p class="text-xs text-gray-400 mt-1">Joined {{ event.joined_at|timesince }} ago</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-500">You haven’t joined any events yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="flex space-x-4">
+    <a href="{% url 'my-posts' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">My Posts</a>
+    <a href="{% url 'post-create' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Create Post</a>
+    <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Logout</button>
+    </form>
+  </div>
+  
+
+</div>
+{% endblock content %}

@@ -1,0 +1,93 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    New Post
+{% endblock title %}
+{% block content %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie("csrftoken");
+
+  document.getElementById("enhance-btn").addEventListener("click", async () => {
+  const content = document.getElementById("id_content").value;
+  const response = await fetch("{% url 'enhance_story' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken  // make sure you include Django's CSRF token
+    },
+    body: JSON.stringify({ content })
+  });
+  const data = await response.json();
+
+  document.getElementById("enhanced-content").innerText = data.enhanced;
+  document.getElementById("enhanced-content").classList.remove("hidden");
+  document.getElementById("accept-btn").classList.remove("hidden");
+  document.getElementById("discard-btn").classList.remove("hidden");
+});
+
+  document.getElementById("accept-btn").addEventListener("click", () => {
+    document.getElementById("id_content").value =
+      document.getElementById("enhanced-content").innerText;
+  });
+
+  document.getElementById("discard-btn").addEventListener("click", () => {
+    document.getElementById("enhanced-content").classList.add("hidden");
+    document.getElementById("accept-btn").classList.add("hidden");
+    document.getElementById("discard-btn").classList.add("hidden");
+  });
+});
+
+</script>
+
+<div class="max-w-xl mx-auto px-4 py-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Post</h2>
+
+  <form method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-4">
+    {% csrf_token %}
+    <div>
+      <label for="id_title" class="block text-sm font-medium text-gray-700">Title</label>
+      {{ form.title }}
+    </div>
+
+    <div>
+      <label for="id_content" class="block text-sm font-medium text-gray-700">Content</label>
+      {{ form.content }}
+    </div>
+    <button type="button" id="enhance-btn" class="mt-2 px-3 py-1 bg-blue-500 text-white rounded">
+  Enhance Content
+</button>
+
+  <div id="enhanced-content" class="hidden mt-2 p-2 border rounded bg-gray-50"></div>
+  <button type="button" id="accept-btn" class="hidden px-3 py-1 bg-green-500 text-white rounded">Accept</button>
+  <button type="button" id="discard-btn" class="hidden px-3 py-1 bg-red-500 text-white rounded">Discard</button>
+
+
+    <div>
+      <label for="id_image" class="block text-sm font-medium text-gray-700">Image</label>
+      {{ form.image }}
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Save
+    </button>
+  </form>
+
+  <div class="mt-4">
+    <a href="{% url 'post-list' %}" class="text-blue-600 hover:underline">← Back to list</a>
+  </div>
+</div>
+{% endblock content %}

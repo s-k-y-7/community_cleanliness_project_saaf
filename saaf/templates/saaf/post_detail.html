@@ -1,0 +1,99 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    {{ post.title }}
+{% endblock title %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Section 1: Image -->
+  <div class="bg-white rounded-lg shadow p-2">
+    {% if post.image %}
+      <img src="{{ post.image.url }}" alt="Post image" class="w-full max-h-72 object-cover rounded">
+    {% else %}
+      <p class="text-gray-500">No image for this post.</p>
+    {% endif %}
+  </div>
+
+  <!-- Section 2: Content -->
+  <div class="bg-white rounded-lg shadow p-4 flex flex-col justify-between">
+    <div>
+      <p class="text-sm text-gray-500 mb-1">By {{ post.author }}</p>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ post.title }}</h2>
+      <p class="text-gray-700 whitespace-pre-line">{{ post.content }}</p>
+    </div>
+    {% if request.user == post.author %}
+      <div class="mt-4">
+        <a href="{% url 'post-delete' post.pk %}" onclick="return confirm('Are you sure you want to delete this post?');"
+           class="text-red-600 hover:underline text-sm">Delete Post</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Section 3: Comments -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Suggestions</h3>
+    {% if comments %}
+      <ul class="space-y-4">
+        {% for comment in comments %}
+          <li class="border-b pb-2">
+            <p class="text-sm text-gray-600">
+              <strong>{{ comment.author.username }}</strong> · {{ comment.created_at|timesince }} ago
+            </p>
+            <p class="text-gray-700 mt-1">{{ comment.content }}</p>
+            {% if request.user == comment.author %}
+              <a href="{% url 'comment-delete' comment.pk %}" onclick="return confirm('Delete this comment?');"
+                 class="text-red-500 hover:underline text-sm">Delete</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500">No suggestions yet.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <form method="post" class="mt-6 space-y-4">
+        {% csrf_token %}
+        <div>
+          <label for="id_content" class="block text-sm font-medium text-gray-700">Add a comment</label>
+          {{ form.content }}
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Post Suggestion</button>
+      </form>
+    {% else %}
+      <p class="mt-4 text-sm text-gray-600">
+        <a href="{% url 'login' %}?next={{ request.path }}" class="text-blue-600 hover:underline">Log in</a> to comment.
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- Section 4: Events -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Drives for This Post</h3>
+    {% if post.events.all %}
+      <ul class="space-y-2">
+        {% for event in post.events.all %}
+          <li>
+            <a href="{% url 'event-detail' event.pk %}" class="text-blue-600 hover:underline font-medium">{{ event.title }}</a>
+            <span class="text-sm text-gray-500">— {{ event.date|date:"M d, Y H:i" }} at {{ event.location_name }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500">No drives linked to this post.</p>
+    {% endif %}
+
+    {% if request.user == post.author %}
+      <div class="mt-4">
+        <a href="{% url 'event-create' post.pk %}" class="text-green-600 hover:underline text-sm">Create a new drive for this post</a>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Back link -->
+<div class="max-w-xs mx-auto px-4 mt-6 border rounded-lg px-4 py-2 bg-blue-700 shadow text-center">
+  <a href="{% url 'post-list' %}" class="text-white text-base">Back to the list</a>
+</div>
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    Events Near Me
+{% endblock title %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- Header -->
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">Events Near You</h2>
+
+  <!-- Event Grid -->
+  {% if events %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for event in events %}
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="text-lg font-semibold text-gray-800 mb-1">
+            <a href="{% url 'event-detail' event.pk %}" class="hover:underline">{{ event.title }}</a>
+          </h3>
+          <p class="text-sm text-gray-600">{{ event.location_name }}</p>
+          <p class="text-xs text-gray-500 mt-1">{{ event.date|date:"M d, Y H:i" }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-500">No events found within 10 km.</p>
+  {% endif %}
+
+</div>
+{% endblock content %}
+

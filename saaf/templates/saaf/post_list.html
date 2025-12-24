@@ -1,0 +1,33 @@
+{% extends "saaf/base.html" %}
+{% block title %}
+    Posts
+{% endblock title %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-6">
+  <!-- <h2 class="text-2xl font-semibold mb-6">Posts</h2> -->
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for post in posts %}
+      <div class="bg-white rounded-lg shadow hover:shadow-lg transition duration-200 overflow-hidden">
+        {% if post.image %}
+          <img src="{{ post.image.url }}" alt="Post image" class="w-full h-48 object-cover">
+        {% endif %}
+        <div class="p-4">
+          <h3 class="text-lg font-bold text-gray-800">
+            <a href="{% url 'post-detail' post.pk %}" class="hover:text-blue-600">{{ post.title }}</a>
+          </h3>
+          <p class="text-sm text-gray-600 mt-1">
+            by <a href="{% url 'user-profile' post.author.username %}" class="text-blue-500">{{ post.author.username }}</a>
+          </p>
+          <p class="text-xs text-gray-500 mt-1">
+            Posted {{ post.created_at|timesince }} ago
+          </p>
+
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-gray-500">No posts available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
